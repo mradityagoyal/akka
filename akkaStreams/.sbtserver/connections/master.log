@@ -1,0 +1,31 @@
+New log file opened at Fri Aug 05 13:26:21 EDT 2016 by 27230@workstation.adityag
+Taking next connection to: 49709
+New client attempting to connect on port: 43477-49709
+  Address = /10.145.13.240:49709
+This client on port 43477 has uuid b48c4608-54fa-4317-949b-bb970385424e configName activator humanReadableName Activator protocolVersion 3 featureTags Vector()
+Connected Clients: activator-b48c4608-54fa-4317-949b-bb970385424e
+Taking next connection to: 49709
+New client attempting to connect on port: 43478-49709
+  Address = /10.145.13.240:49709
+Handshake exception on socket: 43478
+sbt.impl.ipc.HandshakeException: Unable to perform handshake
+	at sbt.impl.ipc.Peer.handshake(IPC.scala:46)
+	at sbt.impl.ipc.MultiClientServer.<init>(IPC.scala:150)
+	at sbt.server.SbtServerSocketHandler$$anon$1.run(SbtServerSocketHandler.scala:43)
+Caused by: java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at sbt.impl.ipc.Peer.receive(IPC.scala:95)
+	at sbt.impl.ipc.Peer.handshake(IPC.scala:49)
+	... 2 more
+Taking next connection to: 49709
+New client attempting to connect on port: 43479-49709
+  Address = /10.145.13.240:49709
+This client on port 43479 has uuid 64263161-d9cb-44b9-8f43-a3eec1e65ed2 configName activator humanReadableName Activator protocolVersion 3 featureTags Vector()
+Connected Clients: activator-b48c4608-54fa-4317-949b-bb970385424e, activator-64263161-d9cb-44b9-8f43-a3eec1e65ed2
+Taking next connection to: 49709
+Checking to see if clients are empty...
+No non-daemon clients connected after 3 min. Shutting down.
+Server socket thread exiting.
+0 clients open, will close them...
+All client sockets have been closed.
+Closing the 27230@workstation.adityag logs at Fri Aug 05 13:29:22 EDT 2016, goodbye.
