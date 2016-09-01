@@ -43,8 +43,8 @@ public class QuickStart {
 	
 	public static Sink<String, CompletionStage<IOResult>> lineSink(String filename){
 		return Flow.of(String.class)
-			    .map(s -> ByteString.fromString(s.toString() + "\n"))
-			    .toMat(FileIO.toPath(Paths.get(filename)), Keep.right());
+				   .map(s -> ByteString.fromString(s.toString() + "\n"))
+				   .toMat(FileIO.toPath(Paths.get(filename)), Keep.right());
 	}
 
 }
