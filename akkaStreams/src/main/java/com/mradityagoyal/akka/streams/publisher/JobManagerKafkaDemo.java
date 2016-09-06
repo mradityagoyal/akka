@@ -1,14 +1,12 @@
 package com.mradityagoyal.akka.streams.publisher;
 
-import java.util.Arrays;
-import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
-import akka.Done;
+
 import akka.NotUsed;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
@@ -20,7 +18,6 @@ import akka.stream.Materializer;
 import akka.stream.ThrottleMode;
 import akka.stream.actor.ActorPublisherMessage;
 import akka.stream.javadsl.Flow;
-import akka.stream.javadsl.Keep;
 import akka.stream.javadsl.RunnableGraph;
 import akka.stream.javadsl.Sink;
 import akka.stream.javadsl.Source;
@@ -69,7 +66,16 @@ public class JobManagerKafkaDemo {
 //		demo.system.scheduler().schedule(Duration.Zero(), Duration.create(1, TimeUnit.SECONDS), ref, ActorPublisherMessage.cancelInstance(), demo.system.dispatcher());
 //		ref.tell(ActorPublisherMessage.cancelInstance(), ActorRef.noSender());
 		Scheduler sch = demo.system.scheduler();
-		sch.scheduleOnce(Duration.create(30, TimeUnit.SECONDS), ref,  ActorPublisherMessage.cancelInstance(), null);
+//		(Duration.create(30, TimeUnit.SECONDS), ref,  ActorPublisherMessage.cancelInstance(), null)
+		sch.scheduleOnce(Duration.create(10, TimeUnit.SECONDS), ref, ActorPublisherMessage.cancelInstance(), demo.system.dispatcher(), null);
+		sch.scheduleOnce(Duration.create(15, TimeUnit.SECONDS), new Runnable() {
+			@Override
+			public void run() {
+				System.out.println("shutting down system");
+				demo.system.stop(ref);
+				demo.system.shutdown();
+			}
+		}, demo.system.dispatcher());
 
 
 

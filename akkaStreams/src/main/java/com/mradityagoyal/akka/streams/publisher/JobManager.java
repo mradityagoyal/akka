@@ -32,7 +32,11 @@ public class JobManager extends AbstractActorPublisher<JobManagerProtocol.Messag
 			}
 		})
 		.match(ActorPublisherMessage.Request.class, request -> deliverBuf())
-		.match(ActorPublisherMessage.Cancel.class, cancel -> context().stop(self())).build());
+		.match(ActorPublisherMessage.Cancel.class, cancel -> {
+			System.out.println("Cancelling stuff");
+			context().stop(self());
+		})
+		.build());
 		// @formatter:on
 	}
 
