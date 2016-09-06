@@ -1,6 +1,6 @@
 package com.mradityagoyal.akka.streams.publisher;
 
-public class JobManagerProtocol {
+public class MessagePublishingProtocol {
 
 	final public class Message {
 		public final String payload;
