@@ -9,25 +9,24 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import akka.NotUsed;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import akka.actor.Scheduler;
 import akka.kafka.ProducerSettings;
 import akka.kafka.javadsl.Producer;
 import akka.stream.ActorMaterializer;
 import akka.stream.Materializer;
-import akka.stream.actor.ActorPublisherMessage;
+import akka.stream.ThrottleMode;
 import akka.stream.javadsl.Flow;
 import akka.stream.javadsl.RunnableGraph;
 import akka.stream.javadsl.Sink;
 import akka.stream.javadsl.Source;
 import scala.concurrent.duration.Duration;
 
-public class JobManagerKafkaDemo {
+public class KafkaPublisherDemo {
 
     final ActorSystem system;
     final Materializer m_materializer;
     protected final ProducerSettings<byte[], String> m_producerSettings;
 
-    public JobManagerKafkaDemo() {
+    public KafkaPublisherDemo() {
         super();
         system = ActorSystem.create("QuickStart"); // TODO: configure system
                                                    // name.
@@ -39,29 +38,36 @@ public class JobManagerKafkaDemo {
     }
 
     public static void main(String[] args) {
-        final JobManagerKafkaDemo demo = new JobManagerKafkaDemo();
+        final KafkaPublisherDemo demo = new KafkaPublisherDemo();
         final MessagePublishingProtocol protocol = new MessagePublishingProtocol();
         // source from ActorPublisher
         // run the graph
-        final ActorRef ref = demo.getMessageActorPublisher("topic2");
-        final Scheduler sch = demo.system.scheduler();
-        ref.tell(protocol.new Message("hello 1 "), ActorRef.noSender());
-        ref.tell(protocol.new Message("hello 2 "), ActorRef.noSender());
-        ref.tell(protocol.new Message("hello 89"), ActorRef.noSender());
-        ref.tell(protocol.new Message("hello 4"), ActorRef.noSender());
+        final ActorRef ref = demo.getMessageActorPublisher("topic4");
 
-        sch.scheduleOnce(Duration.create(5, TimeUnit.SECONDS), ref, protocol.new Message("This seems to work."), demo.system.dispatcher(), null);
+        // source of one message persecond.
+        final Source<String, NotUsed> strings = Source.range(0, 1000).map(String::valueOf).throttle(1, Duration.create(1, TimeUnit.SECONDS), 1,
+                ThrottleMode.shaping());
 
-        sch.scheduleOnce(Duration.create(10, TimeUnit.SECONDS), ref, ActorPublisherMessage.cancelInstance(), demo.system.dispatcher(), null);
-        sch.scheduleOnce(Duration.create(15, TimeUnit.SECONDS), new Runnable() {
+        strings.runForeach(s -> ref.tell(protocol.new Message(s), ActorRef.noSender()), demo.m_materializer);
 
-            @Override
-            public void run() {
-                System.out.println("shutting down system");
-                demo.system.stop(ref);
-                demo.system.shutdown();
-            }
-        }, demo.system.dispatcher());
+//        final Scheduler sch = demo.system.scheduler();
+//        ref.tell(protocol.new Message("hello 1 "), ActorRef.noSender());
+//        ref.tell(protocol.new Message("hello 2 "), ActorRef.noSender());
+//        ref.tell(protocol.new Message("hello 89"), ActorRef.noSender());
+//        ref.tell(protocol.new Message("hello 4"), ActorRef.noSender());
+//
+//        sch.scheduleOnce(Duration.create(5, TimeUnit.SECONDS), ref, protocol.new Message("This seems to work."), demo.system.dispatcher(), null);
+//
+//        sch.scheduleOnce(Duration.create(10, TimeUnit.SECONDS), ref, ActorPublisherMessage.cancelInstance(), demo.system.dispatcher(), null);
+//        sch.scheduleOnce(Duration.create(15, TimeUnit.SECONDS), new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                System.out.println("shutting down system");
+//                demo.system.stop(ref);
+//                demo.system.shutdown();
+//            }
+//        }, demo.system.dispatcher());
 
     }
 
