@@ -1,7 +1,7 @@
-package com.packt.chapter1
+package com.goyal.addy.powersum.akka
 
 import scala.collection.mutable
-import scala.math.{Ordered, floor, min, pow}
+import scala.math.{floor, min, pow}
 
 /**
   * Created by addy on 7/14/17.

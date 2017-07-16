@@ -1,4 +1,4 @@
-package com.packt.chapter1
+package com.goyal.addy.powersum.akka
 
 import akka.actor.Actor
 
@@ -22,8 +22,6 @@ class PowerSumActor extends Actor {
 
 
   case class PowerSumResult(number: Int, maxInSeries: Int, result: Double) extends Ordered[PowerSumResult] {
-
-    import scala.math.Ordered.orderingToOrdered
 
     def compare(that: PowerSumResult): Int = this.maxInSeries compare that.maxInSeries
   }
